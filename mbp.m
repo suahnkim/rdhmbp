@@ -71,8 +71,8 @@ while true
         if length(payload_total) < length(actual_payload)
             payload_left_over=length(actual_payload)-length(payload_total);
             if payload_left_over < H_P_s-length(LM)-32
-                synthetic_payload =randi([0,1],payload_left_over);
-                payload = [actual_payload(length(payload_total)+1:end) synthetic_payload];
+                synthetic_payload =randi([0,1],H_P_s-length(LM)-32-payload_left_over,1);
+                payload = [actual_payload(length(payload_total)+1:end); synthetic_payload];
             else
                 payload = actual_payload(length(payload_total)+1:length(payload_total)+H_P_s-length(LM)-32);
             end
