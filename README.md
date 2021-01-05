@@ -1,6 +1,9 @@
-# rdhmbp
-Reversible Data Hiding with Automatic Brightness Contrast Enhancement:
+#  <img src="https://iaslab.org/img/KUlogo.png" width="200px"> 
+# rdhmbp: Reversible Data Hiding with Automatic Brightness Contrast Enhancement
 
-This repository contains experimental results from submitted paper: https://ieeexplore.ieee.org/document/8463590/. 
+This repository contains code from IEEE paper https://ieeexplore.ieee.org/document/8463590/. 
+<br>This is maintained by Suah Kim @ https://iaslab.org 
 
 run main.m for an example.
+
+The code is vector optimized version.
