@@ -1,6 +1,6 @@
 function main
 %Image
-image=double(rgb2gray(imread('Kodak/kodim01.png')));
+image=double(imread('Kodak images/Original/kodim01_org.png'));
 
 %Payload
 payload_length=25000; %number of bits to be embedded
