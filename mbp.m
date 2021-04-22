@@ -1,18 +1,16 @@
 function [rdh_image, iteration_max, EC_list, LM_size_list, embedding_capacy_left]=mbp(image, actual_payload,iteration_max, max_contrast_bypass_mode)
 if isempty(iteration_max)
-        iteration_max = 300;
+        iteration_max = 1000;
 end
 if isempty(max_contrast_bypass_mode)
     max_contrast_bypass_mode = 0;
 end
+
 %Preprocess Payload (length appended)
 image_size=size(image);
 payload_length_max=2*ceil(log2(image_size(1)*image_size(2)+1));
 actual_payload=[de2bi(length(actual_payload),payload_length_max)'; actual_payload];
 
-
-rng(0);
-%image = image(5:end-5,5:end-5);
 image_size = size(image);
 
 P_s_list=zeros(1,iteration_max);
@@ -97,6 +95,7 @@ while true
         else
             image_hor(image_hor < P_s & image_hor > P_c)=image_hor(image_hor < P_s & image_hor > P_c)+d; %LHS
         end
+
         %Embed P_s
         image_hor(image_hor==P_s & message_whole)=image_hor(image_hor==P_s & message_whole)+d;
         
@@ -110,6 +109,9 @@ while true
         ref_image_hor(:,iteration_max+1:end) = [];
         payload_total=[payload_total; payload];
         embedding_capacy_left=length(payload_total)-length(actual_payload);
+        if max_contrast_bypass_mode ==1
+            embedding_capacy_left=-1;
+        end
         break
         
     else
