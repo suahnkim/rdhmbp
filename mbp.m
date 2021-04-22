@@ -1,7 +1,9 @@
-function [rdh_image, iteration_max, EC_list, LM_size_list, embedding_capacy_left]=mbp(image, actual_payload, iteration_max)
-switch nargin
-    case 2
+function [rdh_image, iteration_max, EC_list, LM_size_list, embedding_capacy_left]=mbp(image, actual_payload,iteration_max, max_contrast_bypass_mode)
+if isempty(iteration_max)
         iteration_max = 300;
+end
+if isempty(max_contrast_bypass_mode)
+    max_contrast_bypass_mode = 0;
 end
 %Preprocess Payload (length appended)
 image_size=size(image);
@@ -46,7 +48,7 @@ while true
     %Embedding capacity + stop condition check
     H_P_s=sum(image_hor==P_s);
     
-    if H_P_s-sum(image_hor(1:16)==P_s) < length(LM)+32 || iteration == iteration_max %Stop condition reached
+    if H_P_s-sum(image_hor(1:16)==P_s) < length(LM)+32 || iteration == iteration_max || (max_contrast_bypass_mode==1 && length(payload_total) > length(actual_payload)) %Stop condition reached
         %no need to update iteration
         P_s=P_s_previous;
         P_c=P_c_previous;

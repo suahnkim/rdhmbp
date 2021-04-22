@@ -3,18 +3,31 @@ function main
 image=double(imread('Kodak images/Original/kodim01_org.png'));
 
 %Payload
-payload_length=25000; %number of bits to be embedded
+rng(1) %Presets randomness to ensure the results are reproducible
+payload_length=15000; %number of bits to be embedded
 payload=randi([0,1],payload_length,1);
 
-%Embedding
-[rdh_image, ~, ~, ~,embedding_capacity_left]=mbp(image,payload);
+%% Embedding for maximum contrast
+iteration_max=[];
+[rdh_image, ~, ~, ~,embedding_capacity_left]=mbp(image,payload,iteration_max,[]);
 if embedding_capacity_left < 0
-    disp('Failed embedding')
+    disp('Failed embedding, increase iteration_max') % default maximum iteration_max is 300, you can increase it as much as you want, but it may take longer time
 else
     disp(['Can embed ' num2str(embedding_capacity_left) ' bits more (estimated)'])
 end
 
-%Recovery check
+%% Embedding only the payload => does not maximize the contrast
+max_contrast_bypass_mode=1;
+iteration_max=[];
+[rdh_image_non_max_contrast, ~, ~, ~,embedding_capacity_left_non_max_contrast]=mbp(image,payload,iteration_max,max_contrast_bypass_mode);
+if embedding_capacity_left_non_max_contrast < 0
+    disp('Failed embedding, increase iteration_max') % default maximum iteration_max is 300, you can increase it as much as you want, but it may take longer time
+else
+    disp(['Can embed ' num2str(embedding_capacity_left_non_max_contrast) ' bits more (estimated)'])
+end
+
+
+%% Recovery check for maximum contrast case
 [payload_rec, re_image] = mbp_recovery(rdh_image);
 if isequal(re_image,image)
     disp('Original image recovered')
@@ -28,10 +41,41 @@ else
     disp('Failed to recover the payload')
 end
 
+%% Recovery check for when only the specified payload has been embedded => does not maximize the contrast
+[payload_rec_non_max_contrast, re_image_non_max_contrast] = mbp_recovery(rdh_image_non_max_contrast);
+if isequal(re_image_non_max_contrast,image)
+    disp('Original image recovered')
+else
+    disp('Failed to recover the original image')
+end
+
+if isequal(payload_rec_non_max_contrast,payload)
+    disp('Payload recovered')
+else
+    disp('Failed to recover the payload')
+end
+
+
 %show the image
 close all
 figure(1)
 imshow(uint8(image))
 figure(2)
 imshow(uint8(rdh_image))
+figure(3)
+imshow(uint8(rdh_image_non_max_contrast))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 end
